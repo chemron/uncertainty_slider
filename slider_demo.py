@@ -1,48 +1,56 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib.widgets import Slider, Button
+from matplotlib.widgets import Slider
+from matplotlib import rcParams
+from matplotlib.lines import Line2D
+from scipy.stats import beta
 
-fig, ax = plt.subplots()
-plt.subplots_adjust(bottom=0.25)
-t = np.arange(0, 1, 0.001)
-# mean:
-mu_0 = 0.5
-# variance:
-sigma_0 = 0.055
-delta_mu = 0.1
-s = (1/(sigma_0*np.sqrt(2*np.pi))) * np.exp(-(1/2)*((t-mu_0)/sigma_0)**2)
-l, = plt.plot(t, s, lw=2)
-ax.margins(x=0)
+rcParams['mathtext.fontset'] = 'stix'
+rcParams['font.family'] = 'STIXGeneral'
+
+fig, axs = plt.subplots(2, 5)
+plots = np.empty((2, 5), dtype=Line2D)
+
+plt.subplots_adjust(bottom=0.20)
+t = np.arange(0, 1, 0.01)
+
+n = 0
+for i in range(2):
+    for j in range(5):
+        ax = axs[i, j]
+        # mean:
+        a_0 = 2.5
+        # variance:
+        b_0 = 2.5
+        delta_a = 0.1
+        plots[i, j], = ax.plot(t, beta.pdf(t, a_0, b_0), lw=2, color="red")
+        ax.set_title(repr(n))
+        ax.axis(xmin=0, xmax=1, ymin=0, ymax=5)
+        n += 1
+        ax.margins(x=0)
 
 axcolor = 'w'
-ax_mu = plt.axes([0.25, 0.1, 0.65, 0.03], facecolor=axcolor)
-ax_sigma = plt.axes([0.25, 0.15, 0.65, 0.03], facecolor=axcolor)
+ax_a = fig.add_axes([0.1, 0.025, 0.8, 0.03], facecolor=axcolor)
+ax_b = fig.add_axes([0.1, 0.075, 0.8, 0.03], facecolor=axcolor)
 
-s_mu = Slider(ax_mu, 'Freq', 0., 1., valinit=mu_0, valstep=delta_mu, color="k")
-s_sigma = Slider(ax_sigma, 'Amp', 0.1, 1, valinit=sigma_0, color="k")
+s_a = Slider(ax_a, r'Alpha', 0.1, 5., valinit=a_0, valstep=delta_a, color="k")
+s_b = Slider(ax_b, r'Beta', 0.1, 5, valinit=b_0, valstep=0.1, color="k")
 
 
 def update(val):
-    mu = s_mu.val
-    sigma = s_sigma.val
-    l.set_ydata((1/(sigma*np.sqrt(2*np.pi))) * np.exp(-(1/2)*((t-mu)/sigma)**2))
-    fig.canvas.draw_idle()
+    for i in range(2):
+        for j in range(5):
+            a = s_a.val
+            b = s_b.val
+            if i == 1 and j == 3:
+                a, b = b, a
+            plots[i, j].set_ydata(beta.pdf(t, a, b))
+            fig.canvas.draw_idle()
+
+# def plot(a, b)
 
 
-s_mu.on_changed(update)
-s_sigma.on_changed(update)
+s_a.on_changed(update)
+s_b.on_changed(update)
 
-resetax = plt.axes([0.8, 0.025, 0.1, 0.04])
-button = Button(resetax, 'Reset', color=axcolor, hovercolor='0.975')
-
-
-def reset(event):
-    s_mu.reset()
-    s_sigma.reset()
-
-
-button.on_clicked(reset)
-
-l.set_color('red')
-l.axes.axis(xmin=0, xmax=1, ymin=0, ymax=5)
 plt.show()
