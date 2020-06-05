@@ -11,7 +11,7 @@ plots = np.empty((3, 6), dtype=Line2D)
 
 # move to make space for slider and digit
 plt.subplots_adjust(bottom=0.20)
-fig.suptitle("Output neuron pdfs")
+fig.suptitle("Output neuron pdfs", x=7/12, ha="center")
 t = np.arange(0, 1, 0.01)
 
 
@@ -20,10 +20,10 @@ n = 0
 for i in range(2):
     for j in range(1, 6):
         ax = axs[i, j]
-        # mean:
-        a_0 = 2.5
-        # variance:
-        b_0 = 2.5
+        a_0 = 2
+        b_0 = 20
+        if i == 1 and j == 3:
+            a_0, b_0 = b_0, a_0
         delta_a = 0.1
         plots[i, j], = ax.plot(t, beta.pdf(t, a_0, b_0), lw=2, color="red")
         ax.set_title(repr(n))
@@ -34,19 +34,26 @@ for i in range(2):
 
 # add sliders
 axcolor = 'w'
-ax_a = fig.add_axes([0.1, 0.025, 0.8, 0.03], facecolor=axcolor)
-ax_b = fig.add_axes([0.1, 0.075, 0.8, 0.03], facecolor=axcolor)
+ax_a = fig.add_axes([0.1, 0.225, 0.8, 0.03], facecolor=axcolor)
+ax_b = fig.add_axes([0.1, 0.175, 0.8, 0.03], facecolor=axcolor)
+ax_c = fig.add_axes([0.1, 0.125, 0.8, 0.03], facecolor=axcolor)
+ax_d = fig.add_axes([0.1, 0.075, 0.8, 0.03], facecolor=axcolor)
+ax_e = fig.add_axes([0.1, 0.025, 0.8, 0.03], facecolor=axcolor)
 
-s_a = Slider(ax_a, r'Alpha', 0.1, 10., valinit=a_0, valstep=delta_a, color="k")
-s_b = Slider(ax_b, r'Beta', 0.1, 10, valinit=b_0, valstep=0.1, color="k")
+
+s_a = Slider(ax_a, '# Epochs', 1, 100, valinit=a_0*5, valstep=1, color="k")
+s_b = Slider(ax_b, '# Layers', 1, 10, valinit=b_0/5, valstep=1, color="k")
+s_c = Slider(ax_c, 'Dataset size', 100, 1000, valinit=200, valstep=10, color="k")
+s_d = Slider(ax_d, 'Batch Size', 1, 10, valinit=4, valstep=1, color="k")
+s_e = Slider(ax_e, 'Learning Rate', 0.001, 0.01, valinit=0.003, valstep=0.001, color="k")
 
 
 # update plot from sliders
 def update(val):
     for i in range(2):
         for j in range(1, 6):
-            a = s_a.val
-            b = s_b.val
+            a = s_a.val/2.5
+            b = s_b.val*5
             # swap a and b for neuron 7
             if i == 1 and j == 3:
                 a, b = b, a
@@ -73,6 +80,7 @@ image = np.asarray(data).squeeze()
 # put image in an axes
 ax_img = axs[0, 0]
 ax_img.set_axis_off()
+ax_img.set_title("Input\n " )
 img = ax_img.imshow(image)
 
 # remove ticks from empty axes
