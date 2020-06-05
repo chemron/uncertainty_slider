@@ -41,9 +41,9 @@ ax_d = fig.add_axes([0.1, 0.075, 0.8, 0.03], facecolor=axcolor)
 ax_e = fig.add_axes([0.1, 0.025, 0.8, 0.03], facecolor=axcolor)
 
 
-s_a = Slider(ax_a, '# Epochs', 1, 100, valinit=a_0*5, valstep=1, color="k")
+s_a = Slider(ax_a, '# Epochs', 1, 20, valinit=a_0*5, valstep=1, color="k")
 s_b = Slider(ax_b, '# Layers', 1, 10, valinit=b_0/5, valstep=1, color="k")
-s_c = Slider(ax_c, 'Dataset size', 100, 1000, valinit=200, valstep=10, color="k")
+s_c = Slider(ax_c, 'Dataset size', 100, 1000, valinit=900, valstep=10, color="k")
 s_d = Slider(ax_d, 'Batch Size', 1, 10, valinit=4, valstep=1, color="k")
 s_e = Slider(ax_e, 'Learning Rate', 0.001, 0.01, valinit=0.003, valstep=0.001, color="k")
 
