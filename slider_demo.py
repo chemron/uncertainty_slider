@@ -80,7 +80,7 @@ image = np.asarray(data).squeeze()
 # put image in an axes
 ax_img = axs[0, 0]
 ax_img.set_axis_off()
-ax_img.set_title("Input\n " )
+ax_img.set_title("Input\n ")
 img = ax_img.imshow(image)
 
 # remove ticks from empty axes
